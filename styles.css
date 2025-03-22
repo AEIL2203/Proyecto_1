@@ -1,0 +1,122 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #1e1e1e;
+    font-family: Arial, sans-serif;
+    color: white;
+}
+
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 80%;
+}
+
+/* Sección del logo y título */
+.logo-section {
+    text-align: center;
+    margin-right: 50px;
+}
+
+.logo-section img {
+    width: 200px;
+    border-radius: 50%;
+}
+
+.logo-section h1 {
+    font-size: 2rem;
+    margin-top: 10px;
+}
+
+/* Sección del formulario */
+.form-section {
+    background-color: white;
+    color: black;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.form-section h2 {
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 10px;
+    background-color: #1e1e1e;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-secondary {
+    margin-top: 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.btn-secondary button {
+    padding: 10px;
+    border: 1px solid #1e1e1e;
+    border-radius: 5px;
+    cursor: pointer;
+    background: none;
+}
+
+/* Estilos para la nueva página */
+.header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    background-color: #dcdcdc;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header img {
+    width: 40px;
+    margin-right: 10px;
+}
+
+.header nav a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}
+
+.availability-section {
+    text-align: center;
+}
+
+.availability-section img {
+    width: 150px;
+    opacity: 0.5;
+}
+
+.availability-section p {
+    margin: 20px 0;
+    font-size: 1.2rem;
+}
