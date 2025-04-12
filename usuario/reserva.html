@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reservar Bicicleta</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="reserva-page">
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-left">
+      <img src="logo_bici.png" alt="Logo" class="nav-logo" />
+      <span class="app-name">Wardiere Inc.</span>
+    </div>
+    <nav class="navbar-menu">
+      <a href="reserva.html">Reservar</a>
+      <a href="devolver.html">Devolver</a>
+      <a href="historial.html">Historial</a>
+      <a href="perfil.html">Perfil</a>
+    </nav>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="reserva-container">
+    <div class="reserva-form">
+      <input type="text" placeholder="Origen" class="input-field" />
+      <input type="text" placeholder="Destino" class="input-field" />
+      <button class="btn-primary">Confirmar Reserva</button>
+    </div>
+
+    <div class="reserva-info">
+      <img src="bike_icon.png" alt="Bicicleta" class="bike-icon" />
+      <p class="disponibilidad-text">Disponibilidad: <strong>0</strong></p>
+      <button class="btn-outline">Verificar disponibilidad</button>
+    </div>
+  </div>
+
+</body>
+</html>

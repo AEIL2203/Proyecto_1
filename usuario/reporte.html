@@ -1,0 +1,50 @@
+<!-- reporte.html -->
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reporte de Problema</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+
+<body class="reserva-page">
+
+  <header class="navbar">
+    <div class="navbar-left">
+      <img src="logo_bici.png" alt="Logo" class="nav-logo" />
+      <span class="app-name">Wardiere Inc.</span>
+    </div>
+    <nav class="navbar-menu">
+      <a href="reserva.html">Reservar</a>
+      <a href="devolver.html">Devolver</a>
+      <a href="historial.html">Historial</a>
+      <a href="perfil.html">Perfil</a>
+    </nav>
+  </header>
+
+  <div class="perfil-container" style="text-align:center;">
+    <h3>SE HA REGRESADO LA BICICLETA CON ÉXITO</h3>
+    <p><em>Reporte de problema</em></p>
+    <textarea placeholder="Describe el problema..." style="width: 80%; height: 150px;"></textarea><br><br>
+    <button onclick="enviarReporte()" class="btn-outline">Enviar</button>
+
+    <script>
+      function enviarReporte() {
+        const mensaje = document.querySelector('textarea').value;
+
+        if (mensaje.trim() !== "") {
+          console.log("Reporte enviado:", mensaje); 
+        } else {
+          console.log("No se escribió ningún problema.");
+        }
+        window.location.href = "reserva.html";
+      }
+    </script>
+
+  </div>
+
+</body>
+
+</html>

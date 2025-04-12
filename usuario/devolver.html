@@ -1,0 +1,38 @@
+<!-- devolver.html -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Devolver Bicicleta</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="reserva-page">
+
+  <header class="navbar">
+    <div class="navbar-left">
+      <img src="logo_bici.png" alt="Logo" class="nav-logo" />
+      <span class="app-name">Wardiere Inc.</span>
+    </div>
+    <nav class="navbar-menu">
+      <a href="reserva.html">Reservar</a>
+      <a href="devolver.html">Perfil</a>
+      <a href="historial.html">Historial</a>
+      <a href="perfil.html">Perfil</a>
+    </nav>
+  </header>
+
+  <div class="perfil-container" style="text-align:center;">
+    <h2>¿Deseas devolver la bicicleta?</h2>
+    <p>Cuando hayas asegurado la bicicleta en una terminal, presiona el botón.</p>
+    <button class="btn-primary" onclick="confirmarDevolucion()">Confirmar Devolución</button>
+  </div>
+
+  <script>
+    function confirmarDevolucion() {
+      window.location.href = "reporte.html";
+    }
+  </script>
+
+</body>
+</html>
