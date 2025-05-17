@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Perfil</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="reserva-page">
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-left">
+      <img src="logo_bici.png" alt="Logo" class="nav-logo" />
+      <span class="app-name">Wardiere Inc.</span>
+    </div>
+    <nav class="navbar-menu">
+      <a href="reserva.html">Reservar</a>
+      <a href="devolver.html">Devolver</a>
+      <a href="historial.html">Historial</a>
+      <a href="perfil.html">Perfil</a>
+    </nav>
+  </header>
+
+  <!-- PERFIL -->
+  <div class="perfil-container">
+    <h2>Perfil del Usuario</h2>
+    <div class="perfil-box" id="perfilInfo">
+      <p><strong>Nombre:</strong> Cargando...</p>
+      <p><strong>Correo:</strong> Cargando...</p>
+      <p><strong>Estado:</strong> Cargando...</p>
+    </div>
+
+    <div class="perfil-actions">
+      <button class="btn-primary">Editar perfil</button>
+      <button class="btn-outline" onclick="cerrarSesion()">Cerrar sesión</button>
+    </div>
+  </div>
+
+  <script>
+    const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+    if (!usuario) {
+      window.location.href = 'login.html';
+    } else {
+      document.getElementById('perfilInfo').innerHTML = `
+        <p><strong>Nombre:</strong> ${usuario.nombre}</p>
+        <p><strong>Correo:</strong> ${usuario.email}</p>
+        <p><strong>Estado:</strong> ${usuario.estado}</p>
+      `;
+    }
+
+    function cerrarSesion() {
+      localStorage.removeItem('usuario');
+      window.location.href = 'login.html';
+    }
+  </script>
+
+</body>
+</html>

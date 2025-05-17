@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Iniciar Sesión</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="login-page">
+  <div class="container">
+    <div class="logo-section">
+      <img src="logo.png" alt="Logo" class="logo-img"/>
+      <h1 class="brand-name">Borcelle</h1>
+    </div>
+    <div class="login-box">
+      <h2>INICIAR SESIÓN</h2>
+      <input type="email" id="email" placeholder="Correo" class="input-field" required />
+      <input type="password" id="password" placeholder="Contraseña" class="input-field" required />
+      <button id="loginBtn" class="btn-outline">Siguiente</button>
+
+      <div id="mensaje" style="color: red; margin-top: 10px;"></div>
+      
+      <div class="separator">
+        <hr /><span class="dot">•</span><hr />
+      </div>
+      
+      <div class="actions">
+        <button class="btn-outline">INICIO RÁPIDO</button>
+        <a href="registro.html" class="btn-outline">CREAR CUENTA</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('loginBtn').addEventListener('click', async () => {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+
+      try {
+        const response = await fetch('http://localhost:3000/api/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          localStorage.setItem('usuario', JSON.stringify(data.usuario));
+          window.location.href = 'perfil.html';
+        } else {
+          document.getElementById('mensaje').textContent = data.error;
+        }
+      } catch (error) {
+        document.getElementById('mensaje').textContent = 'Error en el servidor';
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>

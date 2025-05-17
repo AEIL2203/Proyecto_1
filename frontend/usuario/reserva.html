@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Reservar Bicicleta</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="reserva-page">
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-left">
+      <img src="logo_bici.png" alt="Logo" class="nav-logo" />
+      <span class="app-name">Wardiere Inc.</span>
+    </div>
+    <nav class="navbar-menu">
+      <a href="reserva.html">Reservar</a>
+      <a href="devolver.html">Devolver</a>
+      <a href="historial.html">Historial</a>
+      <a href="perfil.html">Perfil</a>
+    </nav>
+  </header>
+
+  <!-- CONTENIDO PRINCIPAL -->
+  <div class="reserva-container">
+    <div class="reserva-form">
+      <label for="origen">Origen:</label>
+      <select id="origen" class="input-field">
+        <option value="1">Terminal Central</option>
+        <option value="2">Terminal Norte</option>
+        <option value="3">Terminal Sur</option>
+        <option value="4">Terminal Este</option>
+        <option value="5">Terminal Oeste</option>
+      </select>
+
+      <label for="destino">Destino:</label>
+      <select id="destino" class="input-field">
+        <option value="1">Terminal Central</option>
+        <option value="2">Terminal Norte</option>
+        <option value="3">Terminal Sur</option>
+        <option value="4">Terminal Este</option>
+        <option value="5">Terminal Oeste</option>
+      </select>
+
+      <button id="confirmarBtn" class="btn-primary">Confirmar Reserva</button>
+    </div>
+
+    <div class="reserva-info">
+      <img src="bike_icon.png" alt="Bicicleta" class="bike-icon" />
+      <p class="disponibilidad-text">Disponibilidad: <strong id="disponibilidad">0</strong></p>
+      <button id="verQrBtn" class="btn-outline" style="display:none;">Ver QR</button>
+    </div>
+  </div>
+
+  <!-- MODAL QR -->
+  <div id="qrModal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="cerrarModal">&times;</span>
+      <h3>Código QR de la Reserva</h3>
+      <img id="qrImage" src="" alt="QR de reserva">
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('confirmarBtn').addEventListener('click', async () => {
+      const origen = document.getElementById('origen').value;
+      const destino = document.getElementById('destino').value;
+      const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+      if (!usuario) {
+        alert('Debes iniciar sesión para reservar.');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const response = await fetch('http://localhost:3000/api/reservar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id_usuario: usuario.id_usuario,
+          id_origen: origen,
+          id_destino: destino
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        alert('Reserva confirmada. Código de desbloqueo: ' + data.codigo_desbloqueo);
+        document.getElementById('disponibilidad').textContent = data.nueva_disponibilidad;
+
+        // Guardar URL del QR
+        const verQrBtn = document.getElementById('verQrBtn');
+        verQrBtn.style.display = 'inline-block';
+        verQrBtn.setAttribute('data-qr', `http://localhost:3000/qrs/${data.qr_filename}`);
+      } else {
+        alert(data.error);
+      }
+    });
+
+    // Evento para mostrar el modal
+    document.getElementById('verQrBtn').addEventListener('click', () => {
+      const qrUrl = document.getElementById('verQrBtn').getAttribute('data-qr');
+      document.getElementById('qrImage').src = qrUrl;
+      document.getElementById('qrModal').style.display = 'block';
+    });
+
+    // Cerrar el modal
+    document.getElementById('cerrarModal').addEventListener('click', () => {
+      document.getElementById('qrModal').style.display = 'none';
+    });
+
+    // Cerrar modal si se da clic fuera del contenido
+    window.addEventListener('click', (event) => {
+      const modal = document.getElementById('qrModal');
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    });
+  </script>
+
+</body>
+</html>
+
+

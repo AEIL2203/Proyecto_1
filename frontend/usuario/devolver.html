@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Devolver Bicicleta</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="reserva-page">
+
+  <header class="navbar">
+    <div class="navbar-left">
+      <img src="logo_bici.png" alt="Logo" class="nav-logo" />
+      <span class="app-name">Wardiere Inc.</span>
+    </div>
+    <nav class="navbar-menu">
+      <a href="reserva.html">Reservar</a>
+      <a href="devolver.html">Devolver</a>
+      <a href="historial.html">Historial</a>
+      <a href="perfil.html">Perfil</a>
+    </nav>
+  </header>
+
+  <div class="perfil-container" style="text-align:center;">
+    <h2>¿Deseas devolver la bicicleta?</h2>
+    <p>Cuando hayas asegurado la bicicleta en una terminal, presiona el botón.</p>
+    <button class="btn-primary" onclick="confirmarDevolucion()">Confirmar Devolución</button>
+    <p id="mensaje" style="margin-top: 15px; color: green;"></p>
+  </div>
+
+  <script>
+    async function confirmarDevolucion() {
+      const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+      if (!usuario) {
+        alert('Debes iniciar sesión para devolver una bicicleta.');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:3000/api/devolver', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id_usuario: usuario.id_usuario })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Guardar el id_bicicleta en localStorage para usarlo en reporte.html
+          localStorage.setItem('ultima_bicicleta', data.id_bicicleta);
+
+          alert('¡Bicicleta devuelta correctamente! Ahora puedes reportar un problema si lo deseas.');
+          window.location.href = 'reporte.html';
+        } else {
+          alert(data.error);
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('Error al procesar la devolución.');
+      }
+    }
+</script>
+
+</body>
+</html>

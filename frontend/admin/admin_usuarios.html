@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Administración de Usuarios</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="reserva-page">
+
+  <header class="navbar">
+    <div class="navbar-left">
+      <img src="logo_bici.png" alt="Logo" class="nav-logo" />
+      <span class="app-name">Wardiere Inc.</span>
+    </div>
+    <nav class="navbar-menu">
+      <a href="admin_bicicletas.html">Bicicletas</a>
+      <a href="admin_usuarios.html">Usuarios</a>
+      <a href="admin_reportes.html">Reportes</a>
+    </nav>
+  </header>
+
+  <div class="historial-container">
+    <h2 style="text-align:center; margin-bottom:1.5rem;">Gestión de Usuarios</h2>
+
+    <table class="historial-table" style="margin-top:1rem;">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre / Correo</th>
+          <th>Estado de cuenta</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="usuariosBody">
+        <tr><td colspan="4" style="text-align:center; color:gray;">Cargando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    async function cargarUsuarios() {
+      const response = await fetch('http://localhost:3000/api/usuarios');
+      const data = await response.json();
+      const tbody = document.getElementById('usuariosBody');
+      tbody.innerHTML = '';
+
+      data.forEach(user => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${user.id_usuario}</td>
+            <td>${user.nombre} / ${user.email}</td>
+            <td>${user.estado}</td>
+            <td>
+              <button onclick="editarUsuario(${user.id_usuario})">Editar</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    async function editarUsuario(id) {
+      const nuevoEstado = prompt('Nuevo estado (activo/inactivo):');
+      if (!nuevoEstado) return;
+
+      const response = await fetch(`http://localhost:3000/api/usuarios/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ estado: nuevoEstado })
+      });
+
+      if (response.ok) {
+        alert('Usuario actualizado');
+        cargarUsuarios();
+      } else {
+        alert('Error al actualizar usuario');
+      }
+    }
+
+
+    window.onload = cargarUsuarios;
+  </script>
+
+</body>
+</html>

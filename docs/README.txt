@@ -1,0 +1,1 @@
+Aquí van los documentos del proyecto (requisitos, casos de uso, diagramas, etc.)

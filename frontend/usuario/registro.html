@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="login-page">
+  <div class="container">
+    <div class="logo-section">
+      <img src="logo.png" alt="Logo" class="logo-img"/>
+      <h1 class="brand-name">Borcelle</h1>
+    </div>
+    <div class="login-box">
+      <h2>REGISTRO</h2>
+      <input type="text" id="nombre" placeholder="Nombre" class="input-field"/>
+      <input type="text" id="apellido" placeholder="Apellido" class="input-field"/>
+      <input type="email" id="correo" placeholder="Correo" class="input-field"/>
+      <input type="password" id="contrasena" placeholder="Contraseña" class="input-field"/>
+      <button class="btn-primary" onclick="registrarUsuario()">REGISTRAR</button>
+    </div>
+  </div>
+
+  <script>
+    async function registrarUsuario() {
+      const nombre = document.getElementById('nombre').value.trim();
+      const apellido = document.getElementById('apellido').value.trim();
+      const correo = document.getElementById('correo').value.trim();
+      const contrasena = document.getElementById('contrasena').value.trim();
+
+      if (!nombre || !apellido || !correo || !contrasena) {
+        alert('Por favor, completa todos los campos.');
+        return;
+      }
+
+      try {
+        const response = await fetch('http://localhost:3000/api/registro', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ nombre, apellido, correo, contrasena })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          alert('¡Registro exitoso! Ahora puedes iniciar sesión.');
+          window.location.href = 'login.html';
+        } else {
+          alert(data.error);
+        }
+      } catch (error) {
+        console.error('Error al registrar:', error);
+        alert('Error al registrar usuario.');
+      }
+    }
+  </script>
+</body>
+</html>
