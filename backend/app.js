@@ -108,14 +108,28 @@ app.post('/api/reservar', async (req, res) => {
       { autoCommit: false }
     );
 
-    // Cambiar estado de bicicleta
+    // Obtener ID de la reserva recién creada
+    const idReservaResult = await connection.execute(
+      `SELECT MAX(id_reserva) FROM Reserva WHERE id_usuario = :id_usuario`,
+      [id_usuario]
+    );
+    const id_reserva = idReservaResult.rows[0][0];
+
+    // Guardar la ruta del QR en la base de datos
+    await connection.execute(
+      `UPDATE Reserva SET qr_path = :qrPath WHERE id_reserva = :id`,
+      { qrPath: `qrs/${qrFileName}`, id: id_reserva },
+      { autoCommit: false }
+    );
+
+    // Cambiar estado de la bicicleta
     await connection.execute(
       `UPDATE Bicicleta SET estado = 'reservada' WHERE id_bicicleta = :id_bicicleta`,
       [id_bicicleta],
       { autoCommit: false }
     );
 
-    // Restar disponibilidad
+    // Restar disponibilidad en la terminal
     await connection.execute(
       `UPDATE Terminal SET bicicletas_disponibles = bicicletas_disponibles - 1 WHERE id_terminal = :id_origen`,
       [id_origen],
@@ -127,7 +141,8 @@ app.post('/api/reservar', async (req, res) => {
       message: 'Reserva confirmada',
       codigo_desbloqueo,
       qr_filename: qrFileName,
-      nueva_disponibilidad: 0 // puedes consultar esto si lo necesitas
+      qr_path: `qrs/${qrFileName}`,
+      id_reserva
     });
 
   } catch (error) {
