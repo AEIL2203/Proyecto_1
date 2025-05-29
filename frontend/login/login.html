@@ -25,8 +25,7 @@
       </div>
       
       <div class="actions">
-        <button class="btn-outline">INICIO RÁPIDO</button>
-        <a href="registro.html" class="btn-outline">CREAR CUENTA</a>
+        <a href="../usuario/registro.html" class="btn-outline">CREAR CUENTA</a>
       </div>
     </div>
   </div>
@@ -46,11 +45,15 @@
         const data = await response.json();
 
         if (response.ok) {
-          localStorage.setItem('usuario', JSON.stringify(data.usuario));
-          window.location.href = 'perfil.html';
-        } else {
-          document.getElementById('mensaje').textContent = data.error;
-        }
+  localStorage.setItem('usuario', JSON.stringify(data.usuario));
+
+  if (data.usuario.administrador === 1) {
+    window.location.href = '../admin/admin_bicicletas.html';
+  } else {
+    window.location.href = '../usuario/perfil.html';
+  }
+}
+
       } catch (error) {
         document.getElementById('mensaje').textContent = 'Error en el servidor';
         console.error(error);

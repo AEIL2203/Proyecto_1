@@ -15,35 +15,43 @@ const oracleConfig = {
 app.use('/qrs', express.static('public/qrs'));
 // LOGIN
 app.post('/api/login', async (req, res) => {
-    const { email, password } = req.body;
-    let connection;
+  const { email, password } = req.body;
+  let connection;
 
-    try {
-        connection = await oracledb.getConnection(oracleConfig);
+  try {
+    connection = await oracledb.getConnection(oracleConfig);
 
-        const result = await connection.execute(
-            `SELECT id_usuario, nombre, email, estado
-             FROM Usuario
-             WHERE email = :email AND contrasena = :password`,
-            [email, password]
-        );
+    const result = await connection.execute(
+      `SELECT id_usuario, nombre, email, estado, administrador
+       FROM Usuario
+       WHERE email = :email AND contrasena = :password`,
+      [email, password]
+    );
 
-        if (result.rows.length === 0) {
-            return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
-        }
-
-        const [id_usuario, nombre, emailDb, estado] = result.rows[0];
-        const usuario = { id_usuario, nombre, email: emailDb, estado };
-
-        res.json({ usuario });
-
-    } catch (error) {
-        console.error('Error en /api/login:', error);
-        res.status(500).json({ error: 'Error en el servidor' });
-    } finally {
-        if (connection) await connection.close();
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: 'Usuario o contraseña incorrectos' });
     }
+
+    const [id_usuario, nombre, emailDb, estado, administrador] = result.rows[0];
+
+    res.json({
+      usuario: {
+        id_usuario,
+        nombre,
+        email: emailDb,
+        estado,
+        administrador
+      }
+    });
+
+  } catch (error) {
+    console.error('Error en /api/login:', error);
+    res.status(500).json({ error: 'Error en el servidor' });
+  } finally {
+    if (connection) await connection.close();
+  }
 });
+
 app.post('/api/registro', async (req, res) => {
     const { nombre, apellido, correo, contrasena } = req.body;
     let connection;
