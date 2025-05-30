@@ -3,29 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Iniciar Sesión</title>
+  <title>Login - EcoRide</title>
   <link rel="stylesheet" href="../css/style.css" />
 </head>
 <body class="login-page">
+
   <div class="container">
     <div class="logo-section">
-       <img src="../css/images/EcoRide.png" alt="Logo" class="nav-logo" />
-      <span class="app-name">EcoRide</span>
+      <img src="../css/images/EcoRide.png" alt="EcoRide Logo" class="logo-img" />
+      <div class="brand-name">EcoRide</div>
     </div>
-    <div class="login-box">
-      <h2>INICIAR SESIÓN</h2>
-      <input type="email" id="email" placeholder="Correo" class="input-field" required />
-      <input type="password" id="password" placeholder="Contraseña" class="input-field" required />
-      <button id="loginBtn" class="btn-outline">Siguiente</button>
 
-      <div id="mensaje" style="color: red; margin-top: 10px;"></div>
-      
+    <div class="login-box">
+      <h2>Iniciar Sesión</h2>
+
+      <input type="email" id="email" placeholder="Correo electrónico" class="input-field" required />
+      <input type="password" id="password" placeholder="Contraseña" class="input-field" required />
+
+      <button id="loginBtn" class="btn-outline">Acceder</button>
+
+      <div id="mensaje"></div>
+
       <div class="separator">
         <hr /><span class="dot">•</span><hr />
       </div>
-      
+
       <div class="actions">
-        <a href="../usuario/registro.html" class="btn-outline">CREAR CUENTA</a>
+        <a href="../usuario/perfil.html">¿No tienes cuenta? <strong>Crear una</strong></a>
       </div>
     </div>
   </div>
@@ -45,15 +49,15 @@
         const data = await response.json();
 
         if (response.ok) {
-  localStorage.setItem('usuario', JSON.stringify(data.usuario));
-
-  if (data.usuario.administrador === 1) {
-    window.location.href = '../admin/admin_bicicletas.html';
-  } else {
-    window.location.href = '../usuario/perfil.html';
-  }
-}
-
+          localStorage.setItem('usuario', JSON.stringify(data.usuario));
+          if (data.usuario.administrador === 1) {
+            window.location.href = '../admin/admin_bicicletas.html';
+          } else {
+            window.location.href = '../usuario/perfil.html';
+          }
+        } else {
+          document.getElementById('mensaje').textContent = data.error;
+        }
       } catch (error) {
         document.getElementById('mensaje').textContent = 'Error en el servidor';
         console.error(error);
