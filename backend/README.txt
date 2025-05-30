@@ -1,1 +1,0 @@
-Aquí irá el código del backend (Node.js, PHP, etc.)
