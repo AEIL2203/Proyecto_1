@@ -10,7 +10,7 @@
 
   <header class="navbar">
     <div class="navbar-left">
-       <img src="../css/images/EcoRide.png" alt="Logo" class="nav-logo" />
+      <img src="../css/images/EcoRide.png" alt="Logo" class="nav-logo" />
       <span class="app-name">EcoRide</span>
     </div>
     <nav class="navbar-menu">
@@ -21,10 +21,10 @@
     </nav>
   </header>
 
-  <div class="historial-container">
+  <div class="admin-bici-container">
     <h2 style="text-align:center; margin-bottom:1.5rem;">Gestión de Bicicletas</h2>
 
-    <button onclick="mostrarFormularioAgregar()">Agregar Nueva Bicicleta</button>
+    <button class="btn-green" onclick="mostrarFormularioAgregar()">➕ Agregar Nueva Bicicleta</button>
 
     <table class="historial-table" style="margin-top:1rem;">
       <thead>
@@ -40,14 +40,16 @@
         <tr><td colspan="5" style="text-align:center; color:gray;">Cargando...</td></tr>
       </tbody>
     </table>
-  </div>
 
-  <div id="formularioAgregar" style="display:none; margin:2rem;">
-    <h3>Agregar Bicicleta</h3>
-    <input type="text" id="nuevoModelo" placeholder="Modelo" />
-    <input type="text" id="nuevaUbicacion" placeholder="Ubicación" />
-    <button onclick="agregarBicicleta()">Guardar</button>
-    <button onclick="cerrarFormularioAgregar()">Cancelar</button>
+    <div id="formularioAgregar" class="formulario-agregar">
+      <h3>Agregar Bicicleta</h3>
+      <input type="text" id="nuevoModelo" placeholder="Modelo" class="input-field" />
+      <input type="text" id="nuevaUbicacion" placeholder="Ubicación" class="input-field" />
+      <div class="form-actions">
+        <button class="btn-green" onclick="agregarBicicleta()">Guardar</button>
+        <button class="btn-cancel" onclick="cerrarFormularioAgregar()">Cancelar</button>
+      </div>
+    </div>
   </div>
 
   <script>

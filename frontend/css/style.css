@@ -184,7 +184,7 @@ body.login-page {
 
 .historial-table th,
 .historial-table td {
-  border: 1px solid #c85a38;
+  border: 1px solid #4caf50;
   padding: 0.8rem;
   text-align: center;
   font-size: 0.95rem;
@@ -233,7 +233,7 @@ body.login-page {
     .close:hover {
       color: red;
     }
-/* --- MEJORAS AL LOGIN --- */
+/* ---  LOGIN --- */
 body.login-page {
   background-color: #0f0f0f;
 }
@@ -306,4 +306,64 @@ body.login-page {
   font-size: 0.9rem;
   margin-top: 10px;
   text-align: center;
+}
+.admin-bici-container {
+  background: #ffffff;
+  padding: 2rem;
+  border-radius: 10px;
+  margin: 2rem auto;
+  max-width: 1000px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+}
+
+.btn-green {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.btn-green:hover {
+  background-color: #3e8e41;
+}
+
+.btn-cancel {
+  background-color: transparent;
+  color: #333;
+  border: 1px solid #aaa;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.btn-cancel:hover {
+  background-color: #eee;
+}
+
+.formulario-agregar {
+  display: none;
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+}
+
+.formulario-agregar h3 {
+  margin-bottom: 1rem;
+}
+
+.form-actions {
+  margin-top: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+.admin-bici-container h2,
+.historial-container h2 {
+  color: #1e1e1e; /* negro o el color que uses en fondo blanco */
+  margin-bottom: 1rem;
 }
