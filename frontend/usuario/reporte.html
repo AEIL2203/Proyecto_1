@@ -8,6 +8,7 @@
 </head>
 <body class="reserva-page">
 
+  <!-- NAVBAR -->
   <header class="navbar">
     <div class="navbar-left">
       <img src="../css/images/EcoRide.png" alt="Logo" class="nav-logo" />
@@ -21,11 +22,14 @@
     </nav>
   </header>
 
-  <div class="perfil-container" style="text-align:center;">
-    <h3>SE HA REGRESADO LA BICICLETA CON ÉXITO</h3>
+  <!-- CONTENIDO -->
+  <div class="formulario-reserva">
+    <h2>Se ha regresado la bicicleta con éxito</h2>
     <p><em>Reporte de problema</em></p>
-    <textarea id="reporteText" placeholder="Describe el problema..." style="width: 80%; height: 150px;"></textarea><br><br>
-    <button onclick="enviarReporte()" class="btn-outline">Enviar</button>
+
+    <textarea id="reporteText" class="input-field" placeholder="Describe el problema..." rows="6" style="resize: none;"></textarea>
+
+    <button onclick="enviarReporte()" class="btn-primary" style="margin-top: 1rem;">Enviar</button>
   </div>
 
   <script>
@@ -60,7 +64,6 @@
 
         if (response.ok) {
           alert('¡Reporte enviado exitosamente!');
-          // Limpiar el id guardado para evitar confusiones en el futuro
           localStorage.removeItem('ultima_bicicleta');
           window.location.href = 'reserva.html';
         } else {

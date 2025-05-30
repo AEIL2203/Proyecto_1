@@ -8,6 +8,7 @@
 </head>
 <body class="reserva-page">
 
+  <!-- NAVBAR -->
   <header class="navbar">
     <div class="navbar-left">
       <img src="../css/images/EcoRide.png" alt="Logo" class="nav-logo" />
@@ -21,9 +22,11 @@
     </nav>
   </header>
 
-  <div class="perfil-container" style="text-align:center;">
+  <!-- CONTENIDO -->
+  <div class="formulario-reserva">
     <h2>¿Deseas devolver la bicicleta?</h2>
     <p>Cuando hayas asegurado la bicicleta en una terminal, presiona el botón.</p>
+
     <button class="btn-primary" onclick="confirmarDevolucion()">Confirmar Devolución</button>
     <p id="mensaje" style="margin-top: 15px; color: green;"></p>
   </div>
@@ -48,9 +51,7 @@
         const data = await response.json();
 
         if (response.ok) {
-          // Guardar el id_bicicleta en localStorage para usarlo en reporte.html
           localStorage.setItem('ultima_bicicleta', data.id_bicicleta);
-
           alert('¡Bicicleta devuelta correctamente! Ahora puedes reportar un problema si lo deseas.');
           window.location.href = 'reporte.html';
         } else {
@@ -61,7 +62,7 @@
         alert('Error al procesar la devolución.');
       }
     }
-</script>
+  </script>
 
 </body>
 </html>
