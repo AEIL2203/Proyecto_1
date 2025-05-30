@@ -464,47 +464,53 @@ app.delete('/api/reportes/:id', async (req, res) => {
 });
 // Obtener todos los usuarios
 app.get('/api/usuarios', async (req, res) => {
-    let connection;
-    try {
-        connection = await oracledb.getConnection(oracleConfig);
-        const result = await connection.execute(
-            `SELECT id_usuario, nombre, email, estado FROM Usuario`
-        );
-        const usuarios = result.rows.map(r => ({
-            id_usuario: r[0],
-            nombre: r[1],
-            email: r[2],
-            estado: r[3]
-        }));
-        res.json(usuarios);
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Error al obtener usuarios' });
-    } finally {
-        if (connection) await connection.close();
-    }
+  let connection;
+
+  try {
+    connection = await oracledb.getConnection(oracleConfig);
+    const result = await connection.execute(
+      `SELECT id_usuario, nombre, email, estado, administrador FROM Usuario`
+    );
+
+    const usuarios = result.rows.map(row => ({
+      id_usuario: row[0],
+      nombre: row[1],
+      email: row[2],
+      estado: row[3],
+      administrador: row[4]
+    }));
+
+    res.json(usuarios);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error al obtener usuarios' });
+  } finally {
+    if (connection) await connection.close();
+  }
 });
+
 
 // Editar usuario (cambiar estado)
 app.put('/api/usuarios/:id', async (req, res) => {
-    const { id } = req.params;
-    const { estado } = req.body;
-    let connection;
-    try {
-        connection = await oracledb.getConnection(oracleConfig);
-        await connection.execute(
-            `UPDATE Usuario SET estado = :estado WHERE id_usuario = :id`,
-            { estado, id },
-            { autoCommit: true }
-        );
-        res.json({ message: 'Usuario actualizado' });
-    } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Error al actualizar usuario' });
-    } finally {
-        if (connection) await connection.close();
-    }
+  const { id } = req.params;
+  const { estado, administrador } = req.body;
+  let connection;
+  try {
+    connection = await oracledb.getConnection(oracleConfig);
+    await connection.execute(
+      `UPDATE Usuario SET estado = :estado, administrador = :admin WHERE id_usuario = :id`,
+      { estado, admin: administrador, id },
+      { autoCommit: true }
+    );
+    res.json({ message: 'Usuario actualizado' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Error al actualizar usuario' });
+  } finally {
+    if (connection) await connection.close();
+  }
 });
+
 
 // Eliminar usuario
 app.delete('/api/usuarios/:id', async (req, res) => {
