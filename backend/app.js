@@ -532,11 +532,6 @@ app.delete('/api/usuarios/:id', async (req, res) => {
     }
 });
 
-
-
-
-
-
 app.listen(PORT, () => {
     console.log(`Servidor backend corriendo en http://localhost:${PORT}`);
 });
