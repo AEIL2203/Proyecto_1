@@ -40,7 +40,7 @@
   </div>
   <script>
     async function cargarReportes() {
-      const response = await fetch('http://localhost:3000/api/reportes');
+      const response = await fetch('http://ecorideprfinal.lat:3000/api/reportes');
       const data = await response.json();
       const tbody = document.getElementById('reportesBody');
       tbody.innerHTML = '';
@@ -62,7 +62,7 @@
     async function editarReporte(id) {
       const nuevoEstado = prompt('Nuevo estado (pendiente/resuelto):');
       if (!nuevoEstado) return;
-      const response = await fetch(`http://localhost:3000/api/reportes/${id}`, {
+      const response = await fetch(`http://ecorideprfinal.lat:3000/api/reportes/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ estado: nuevoEstado })
@@ -76,7 +76,7 @@
     }
     async function eliminarReporte(id) {
       if (!confirm('¿Seguro que quieres eliminar este reporte?')) return;
-      const response = await fetch(`http://localhost:3000/api/reportes/${id}`, {
+      const response = await fetch(`http://ecorideprfinal.lat:3000/api/reportes/${id}`, {
         method: 'DELETE'
       });
       if (response.ok) {

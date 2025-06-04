@@ -1,19 +1,24 @@
 const express = require('express');
 const oracledb = require('oracledb');
 const cors = require('cors');
+
 const app = express();
 const PORT = 3000;
 
-app.use(cors());
-app.use(express.json());
-
+// Configuración Oracle (ajústala si usas un usuario distinto)
 const oracleConfig = {
     user: 'BICICLETAS_APP',
     password: '123456',
     connectString: 'localhost/XEPDB1'
 };
+
 app.use('/qrs', express.static('public/qrs'));
-// LOGIN
+
+// Middlewares
+app.use(cors());
+app.use(express.json());
+
+// Ruta: Login
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
   let connection;
@@ -52,33 +57,64 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
+// Ruta: Registro
 app.post('/api/registro', async (req, res) => {
-    const { nombre, apellido, correo, contrasena } = req.body;
-    let connection;
+  const { nombre, apellido, correo, contrasena } = req.body;
+  let connection;
 
-    try {
-        connection = await oracledb.getConnection(oracleConfig);
+  try {
+    connection = await oracledb.getConnection(oracleConfig);
 
-        await connection.execute(
-            `INSERT INTO Usuario (id_usuario, nombre, email, estado, contrasena)
-             VALUES (Usuario_seq.NEXTVAL, :nombre_apellido, :correo, 'activo', :contrasena)`,
-            {
-                nombre_apellido: `${nombre} ${apellido}`,
-                correo,
-                contrasena
-            },
-            { autoCommit: true }
-        );
+    await connection.execute(
+      `INSERT INTO Usuario (id_usuario, nombre, email, estado, contrasena)
+       VALUES (Usuario_seq.NEXTVAL, :nombre_apellido, :correo, 'activo', :contrasena)`,
+      {
+        nombre_apellido: `${nombre} ${apellido}`,
+        correo,
+        contrasena
+      },
+      { autoCommit: true }
+    );
 
-        res.json({ message: 'Usuario registrado exitosamente' });
+    res.json({ message: 'Usuario registrado exitosamente' });
 
-    } catch (error) {
-        console.error('Error en /api/registro:', error);
-        res.status(500).json({ error: 'Error al registrar usuario' });
-    } finally {
-        if (connection) await connection.close();
-    }
+  } catch (error) {
+    console.error('Error en /api/registro:', error);
+    res.status(500).json({ error: 'Error al registrar usuario' });
+  } finally {
+    if (connection) await connection.close();
+  }
 });
+
+// Ruta: Obtener datos del perfil por ID
+app.get('/api/perfil/:id', async (req, res) => {
+  const id = req.params.id;
+  let connection;
+
+  try {
+    connection = await oracledb.getConnection(oracleConfig);
+
+    const result = await connection.execute(
+      `SELECT nombre, email, estado FROM Usuario WHERE id_usuario = :id`,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Usuario no encontrado' });
+    }
+
+    const [nombre, email, estado] = result.rows[0];
+
+    res.json({ nombre, email, estado });
+
+  } catch (error) {
+    console.error('Error en /api/perfil:', error);
+    res.status(500).json({ error: 'Error en el servidor' });
+  } finally {
+    if (connection) await connection.close();
+  }
+});
+
 const QRCode = require('qrcode');
 const fs = require('fs');
 
@@ -532,6 +568,10 @@ app.delete('/api/usuarios/:id', async (req, res) => {
     }
 });
 
+
+
+
+// Inicio del servidor
 app.listen(PORT, () => {
-    console.log(`Servidor backend corriendo en http://localhost:${PORT}`);
+  console.log(`Servidor escuchando en http://ecorideprfinal.lat:${PORT}`);
 });

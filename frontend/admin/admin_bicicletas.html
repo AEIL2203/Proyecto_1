@@ -54,7 +54,7 @@
 
   <script>
     async function cargarBicicletas() {
-      const response = await fetch('http://localhost:3000/api/bicicletas');
+      const response = await fetch('http://ecorideprfinal.lat:3000/api/bicicletas');
       const data = await response.json();
       const tbody = document.getElementById('bicicletasBody');
       tbody.innerHTML = '';
@@ -87,7 +87,7 @@
       const modelo = document.getElementById('nuevoModelo').value.trim();
       const ubicacion = document.getElementById('nuevaUbicacion').value.trim();
 
-      const response = await fetch('http://localhost:3000/api/bicicletas', {
+      const response = await fetch('http://ecorideprfinal.lat:3000/api/bicicletas', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ modelo, ubicacion })
@@ -107,7 +107,7 @@
       const nuevaUbicacion = prompt('Nueva ubicación:');
       const nuevoEstado = prompt('Nuevo estado (activo/inactivo/reservada):');
 
-      const response = await fetch(`http://localhost:3000/api/bicicletas/${id}`, {
+      const response = await fetch(`http://ecorideprfinal.lat:3000/api/bicicletas/${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ modelo: nuevoModelo, ubicacion: nuevaUbicacion, estado: nuevoEstado })
@@ -124,7 +124,7 @@
     async function eliminarBicicleta(id) {
       if (!confirm('¿Seguro que quieres eliminar esta bicicleta?')) return;
 
-      const response = await fetch(`http://localhost:3000/api/bicicletas/${id}`, {
+      const response = await fetch(`http://ecorideprfinal.lat:3000/api/bicicletas/${id}`, {
         method: 'DELETE'
       });
 

@@ -29,40 +29,43 @@
       </div>
 
       <div class="actions">
-        <a href="../usuario/perfil.html">¿No tienes cuenta? <strong>Crear una</strong></a>
+        <a href="../usuario/registro.html">¿No tienes cuenta? <strong>Crear una</strong></a>
       </div>
     </div>
   </div>
 
-  <script>
-    document.getElementById('loginBtn').addEventListener('click', async () => {
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
+  ...
+<script>
+  document.getElementById('loginBtn').addEventListener('click', async () => {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
 
-      try {
-        const response = await fetch('http://localhost:3000/api/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password })
-        });
+    try {
+      const response = await fetch('http://ecorideprfinal.lat:3000/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
 
-        const data = await response.json();
+      const data = await response.json();
 
-        if (response.ok) {
-          localStorage.setItem('usuario', JSON.stringify(data.usuario));
-          if (data.usuario.administrador === 1) {
-            window.location.href = '../admin/admin_bicicletas.html';
-          } else {
-            window.location.href = '../usuario/perfil.html';
-          }
+      if (response.ok) {
+        localStorage.setItem('usuario', JSON.stringify(data.usuario));
+        if (data.usuario.administrador === 1) {
+          window.location.href = '../admin/admin_bicicletas.html';
         } else {
-          document.getElementById('mensaje').textContent = data.error;
+          window.location.href = '../usuario/perfil.html';
         }
-      } catch (error) {
-        document.getElementById('mensaje').textContent = 'Error en el servidor';
-        console.error(error);
+      } else {
+        document.getElementById('mensaje').textContent = data.error;
       }
-    });
-  </script>
+    } catch (error) {
+      document.getElementById('mensaje').textContent = 'Error en el servidor';
+      console.error(error);
+    }
+  });
+</script>
+...
+
 </body>
 </html>

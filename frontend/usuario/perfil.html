@@ -41,13 +41,22 @@
     const usuario = JSON.parse(localStorage.getItem('usuario'));
 
     if (!usuario) {
-      window.location.href = 'login.html';
+      window.location.href = '../login/login.html';
     } else {
-      document.getElementById('perfilInfo').innerHTML = `
-        <p><strong>Nombre:</strong> ${usuario.nombre}</p>
-        <p><strong>Correo:</strong> ${usuario.email}</p>
-        <p><strong>Estado:</strong> ${usuario.estado}</p>
-      `;
+      // Petición para obtener datos actualizados del perfil
+      fetch(`http://31.97.134.125:3000/api/perfil/${usuario.id_usuario}`)
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('perfilInfo').innerHTML = `
+            <p><strong>Nombre:</strong> ${data.nombre}</p>
+            <p><strong>Correo:</strong> ${data.email}</p>
+            <p><strong>Estado:</strong> ${data.estado}</p>
+          `;
+        })
+        .catch(err => {
+          console.error('Error cargando perfil:', err);
+          document.getElementById('perfilInfo').innerHTML = `<p>Error al cargar perfil</p>`;
+        });
     }
 
     function cerrarSesion() {

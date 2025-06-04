@@ -52,7 +52,7 @@
       }
 
       try {
-        const response = await fetch(`http://localhost:3000/api/historial/${usuario.id_usuario}`);
+        const response = await fetch(`http://ecorideprfinal.lat:3000/api/historial/${usuario.id_usuario}`);
         const data = await response.json();
 
         if (response.ok) {

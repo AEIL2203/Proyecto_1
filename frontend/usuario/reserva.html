@@ -63,6 +63,8 @@
   </div>
 
   <script>
+    const backendURL = 'http://ecorideprfinal.lat:3000'; 
+
     document.getElementById('confirmarBtn').addEventListener('click', async () => {
       const origen = document.getElementById('origen').value;
       const destino = document.getElementById('destino').value;
@@ -70,31 +72,36 @@
 
       if (!usuario) {
         alert('Debes iniciar sesión para reservar.');
-        window.location.href = 'login.html';
+        window.location.href = '../login/login.html';
         return;
       }
 
-      const response = await fetch('http://localhost:3000/api/reservar', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id_usuario: usuario.id_usuario,
-          id_origen: origen,
-          id_destino: destino
-        })
-      });
+      try {
+        const response = await fetch(`${backendURL}/api/reservar`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id_usuario: usuario.id_usuario,
+            id_origen: origen,
+            id_destino: destino
+          })
+        });
 
-      const data = await response.json();
+        const data = await response.json();
 
-      if (response.ok) {
-        alert('Reserva confirmada. Código de desbloqueo: ' + data.codigo_desbloqueo);
-        document.getElementById('disponibilidad').textContent = data.nueva_disponibilidad;
+        if (response.ok) {
+          alert('Reserva confirmada. Código de desbloqueo: ' + data.codigo_desbloqueo);
+          document.getElementById('disponibilidad').textContent = "Nueva disponibilidad: " + data.nueva_disponibilidad;
 
-        const verQrBtn = document.getElementById('verQrBtn');
-        verQrBtn.style.display = 'inline-block';
-        verQrBtn.setAttribute('data-qr', `http://localhost:3000/qrs/${data.qr_filename}`);
-      } else {
-        alert(data.error);
+          const verQrBtn = document.getElementById('verQrBtn');
+          verQrBtn.style.display = 'inline-block';
+          verQrBtn.setAttribute('data-qr', `${backendURL}/${data.qr_path}`);
+        } else {
+          alert(data.error);
+        }
+      } catch (err) {
+        console.error('Error al reservar:', err);
+        alert('Error al procesar la reserva');
       }
     });
 
@@ -118,6 +125,5 @@
 
 </body>
 </html>
-
 
 

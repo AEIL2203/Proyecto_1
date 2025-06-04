@@ -47,7 +47,7 @@
  <script>
   async function cargarUsuarios() {
     try {
-      const response = await fetch('http://localhost:3000/api/usuarios');
+      const response = await fetch('http://ecorideprfinal.lat:3000/api/usuarios');
       const data = await response.json();
       const tbody = document.getElementById('usuariosBody');
       tbody.innerHTML = '';
@@ -84,7 +84,7 @@
       return;
     }
 
-    const response = await fetch(`http://localhost:3000/api/usuarios/${id}`, {
+    const response = await fetch(`http://ecorideprfinal.lat:3000/api/usuarios/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ estado: nuevoEstado, administrador: parseInt(nuevoAdmin) })
