@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Administración de Reportes</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="reserva-page">
+  <header class="navbar">
+    <div class="navbar-left">
+       <img src="../css/images/EcoRide.png" alt="Logo" class="nav-logo" />
+      <span class="app-name">EcoRide</span>
+    </div>
+    <nav class="navbar-menu">
+      <a href="admin_bicicletas.html">Bicicletas</a>
+      <a href="admin_usuarios.html">Usuarios</a>
+      <a href="admin_reportes.html">Reportes</a>
+      <a href="../login/login.html">Salir</a>
+    </nav>
+  </header>
+
+  <div class="historial-container">
+    <h2 style="text-align:center; margin-bottom:1.5rem;">Gestión de Reportes</h2>
+    <table class="historial-table" style="margin-top:1rem;">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Usuario</th>
+          <th>Fecha</th>
+          <th>Descripción</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="reportesBody">
+        <tr><td colspan="6" style="text-align:center; color:gray;">Cargando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <script>
+    async function cargarReportes() {
+      const response = await fetch('http://ecoriceprfinal.lat/api/reportes');
+      const data = await response.json();
+      const tbody = document.getElementById('reportesBody');
+      tbody.innerHTML = '';
+      data.forEach(rep => {
+        tbody.innerHTML += `
+          <tr>
+            <td>${rep.id_reporte}</td>
+            <td>${rep.usuario}</td>
+            <td>${rep.fecha}</td>
+            <td>${rep.descripcion}</td>
+            <td>${rep.estado}</td>
+            <td>
+              <button onclick="editarReporte(${rep.id_reporte})">Editar</button>
+              <button onclick="eliminarReporte(${rep.id_reporte})">Eliminar</button>
+            </td>
+          </tr>`;
+      });
+    }
+    async function editarReporte(id) {
+      const nuevoEstado = prompt('Nuevo estado (pendiente/resuelto):');
+      if (!nuevoEstado) return;
+      const response = await fetch(`http://ecoriceprfinal.lat/api/reportes/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ estado: nuevoEstado })
+      });
+      if (response.ok) {
+        alert('Reporte actualizado');
+        cargarReportes();
+      } else {
+        alert('Error al actualizar reporte');
+      }
+    }
+    async function eliminarReporte(id) {
+      if (!confirm('¿Seguro que quieres eliminar este reporte?')) return;
+      const response = await fetch(`http://ecoriceprfinal.lat/api/reportes/${id}`, {
+        method: 'DELETE'
+      });
+      if (response.ok) {
+        alert('Reporte eliminado');
+        cargarReportes();
+      } else {
+        alert('Error al eliminar reporte');
+      }
+    }
+    window.onload = cargarReportes;
+  </script>
+</body>
+</html>

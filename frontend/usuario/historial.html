@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Historial</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body class="reserva-page">
+
+  <!-- NAVBAR -->
+  <header class="navbar">
+    <div class="navbar-left">
+      <img src="../css/images/EcoRide.png" alt="Logo" class="nav-logo" />
+      <span class="app-name">EcoRide</span>
+    </div>
+    <nav class="navbar-menu">
+      <a href="reserva.html">Reservar</a>
+      <a href="devolver.html">Devolver</a>
+      <a href="historial.html">Historial</a>
+      <a href="perfil.html">Perfil</a>
+    </nav>
+  </header>
+
+  <!-- TABLA DE HISTORIAL -->
+  <div class="historial-container">
+    <h2>Historial de Viajes</h2>
+    <table class="historial-table">
+      <thead>
+        <tr>
+          <th>NÚMERO DE BICICLETA</th>
+          <th>DESCRIPCIÓN</th>
+          <th>FECHA INICIO</th>
+          <th>FECHA FIN</th>
+          <th>REPORTE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Los datos se llenarán dinámicamente -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    async function cargarHistorial() {
+      const usuario = JSON.parse(localStorage.getItem('usuario'));
+
+      if (!usuario) {
+        alert('Debes iniciar sesión para ver el historial.');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const response = await fetch(`http://ecoriceprfinal.lat/api/historial/${usuario.id_usuario}`);
+        const data = await response.json();
+
+        if (response.ok) {
+          const tbody = document.querySelector('.historial-table tbody');
+          tbody.innerHTML = '';
+
+          data.historial.forEach(item => {
+            const row = `
+              <tr>
+                <td>${item.numero_bicicleta}</td>
+                <td>${item.descripcion}</td>
+                <td>${item.fecha_inicio}</td>
+                <td>${item.fecha_fin}</td>
+                <td>${item.reporte}</td>
+              </tr>
+            `;
+            tbody.innerHTML += row;
+          });
+        } else {
+          alert(data.error);
+        }
+      } catch (error) {
+        console.error('Error al cargar historial:', error);
+        alert('Error al obtener el historial.');
+      }
+    }
+
+    window.onload = cargarHistorial;
+  </script>
+
+</body>
+</html>
