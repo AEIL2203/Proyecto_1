@@ -5,7 +5,7 @@ const cors = require('cors');
 const app = express();
 const PORT = 3000;
 
-// Configuración Oracle (ajústala si usas un usuario distinto)
+
 const oracleConfig = {
     user: 'BICICLETAS_APP',
     password: '123456',
