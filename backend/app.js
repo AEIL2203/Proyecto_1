@@ -1,24 +1,24 @@
 const express = require('express');
 const oracledb = require('oracledb');
 const cors = require('cors');
-
 const app = express();
 const PORT = 3000;
+const path = require('path');
+const fs = require('fs');
+const QRCode = require('qrcode');
 
+
+app.use(cors());
+app.use(express.json());
+app.use('/qrs', express.static(path.resolve(__dirname, 'public', 'qrs')));
 
 const oracleConfig = {
     user: 'BICICLETAS_APP',
     password: '123456',
-    connectString: 'localhost/XEPDB1'
+    connectString: '34.9.82.233:1521/XEPDB1'
 };
 
-app.use('/qrs', express.static('public/qrs'));
-
-// Middlewares
-app.use(cors());
-app.use(express.json());
-
-// Ruta: Login
+// LOGIN
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
   let connection;
@@ -57,67 +57,34 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-// Ruta: Registro
 app.post('/api/registro', async (req, res) => {
-  const { nombre, apellido, correo, contrasena } = req.body;
-  let connection;
+    const { nombre, apellido, correo, contrasena } = req.body;
+    let connection;
 
-  try {
-    connection = await oracledb.getConnection(oracleConfig);
+    try {
+        connection = await oracledb.getConnection(oracleConfig);
 
-    await connection.execute(
-      `INSERT INTO Usuario (id_usuario, nombre, email, estado, contrasena)
-       VALUES (Usuario_seq.NEXTVAL, :nombre_apellido, :correo, 'activo', :contrasena)`,
-      {
-        nombre_apellido: `${nombre} ${apellido}`,
-        correo,
-        contrasena
-      },
-      { autoCommit: true }
-    );
+        await connection.execute(
+  `INSERT INTO Usuario (id_usuario, nombre, email, estado, contrasena)
+   VALUES (Usuario_seq.NEXTVAL, :nombre, :correo,'1', :contrasena)`,
+  {
+    nombre: `${nombre} ${apellido}`,  // nombre completo
+    correo,
+    contrasena
+  },
+  { autoCommit: true }
+);
 
-    res.json({ message: 'Usuario registrado exitosamente' });
 
-  } catch (error) {
-    console.error('Error en /api/registro:', error);
-    res.status(500).json({ error: 'Error al registrar usuario' });
-  } finally {
-    if (connection) await connection.close();
-  }
-});
+        res.json({ message: 'Usuario registrado exitosamente' });
 
-// Ruta: Obtener datos del perfil por ID
-app.get('/api/perfil/:id', async (req, res) => {
-  const id = req.params.id;
-  let connection;
-
-  try {
-    connection = await oracledb.getConnection(oracleConfig);
-
-    const result = await connection.execute(
-      `SELECT nombre, email, estado FROM Usuario WHERE id_usuario = :id`,
-      [id]
-    );
-
-    if (result.rows.length === 0) {
-      return res.status(404).json({ error: 'Usuario no encontrado' });
+    } catch (error) {
+        console.error('Error en /api/registro:', error);
+        res.status(500).json({ error: 'Error al registrar usuario' });
+    } finally {
+        if (connection) await connection.close();
     }
-
-    const [nombre, email, estado] = result.rows[0];
-
-    res.json({ nombre, email, estado });
-
-  } catch (error) {
-    console.error('Error en /api/perfil:', error);
-    res.status(500).json({ error: 'Error en el servidor' });
-  } finally {
-    if (connection) await connection.close();
-  }
 });
-
-const QRCode = require('qrcode');
-const fs = require('fs');
-
 app.post('/api/reservar', async (req, res) => {
   const { id_usuario, id_origen, id_destino } = req.body;
   let connection;
@@ -125,7 +92,15 @@ app.post('/api/reservar', async (req, res) => {
   try {
     connection = await oracledb.getConnection(oracleConfig);
 
-    // Buscar bicicleta activa
+const reservasActivas = await connection.execute(
+  `SELECT COUNT(*) FROM Reserva WHERE id_usuario = :id_usuario AND estado = 'activa'`,
+  [id_usuario]
+);
+
+if (reservasActivas.rows[0][0] > 0) {
+  return res.status(400).json({ error: 'Ya tienes una bicicleta reservada actualmente.' });
+}
+
     const biciResult = await connection.execute(
       `SELECT id_bicicleta FROM Bicicleta WHERE estado = 'activo' AND id_terminal = :id_origen FETCH FIRST 1 ROWS ONLY`,
       [id_origen]
@@ -137,50 +112,74 @@ app.post('/api/reservar', async (req, res) => {
 
     const id_bicicleta = biciResult.rows[0][0];
     const codigo_desbloqueo = 'CODE' + Math.floor(1000 + Math.random() * 9000);
-
-    // ✅ Generar código QR
     const qrText = `Reserva confirmada\nUsuario: ${id_usuario}\nBicicleta: ${id_bicicleta}\nCódigo: ${codigo_desbloqueo}`;
     const qrFileName = `qr_${Date.now()}.png`;
-    const qrPath = `./public/qrs/${qrFileName}`;
-    await QRCode.toFile(qrPath, qrText);
+    const qrDir = '/var/www/eco-ride/qrs';
+    const qrPath = path.join(qrDir, qrFileName);
+
+
+    // Crear directorio si no existe
+    if (!fs.existsSync(path.dirname(qrPath))) {
+      fs.mkdirSync(path.dirname(qrPath), { recursive: true });
+    }
+
+// Generar archivo QR en carpeta privada
+const qrDirPrivado = '/root/eco-ride/Proyecto/backend/public/qrs';
+const qrPathPrivado = path.join(qrDirPrivado, qrFileName);
+
+// Crear ambas carpetas si no existen
+if (!fs.existsSync(qrDir)) fs.mkdirSync(qrDir, { recursive: true });
+if (!fs.existsSync(qrDirPrivado)) fs.mkdirSync(qrDirPrivado, { recursive: true });
+
+// Generar archivo QR en carpeta pública
+await QRCode.toFile(qrPath, qrText);
+
+// También guardar en carpeta privada (opcional, por seguridad)
+await QRCode.toFile(qrPathPrivado, qrText);
+
+// Leer imagen como buffer para guardar en la base de datos
+const qrImageBuffer = await fs.promises.readFile(qrPath);
+
+
 
     // Insertar reserva
     await connection.execute(
       `INSERT INTO Reserva (id_reserva, fecha_inicio, estado, codigo_desbloqueo, id_usuario, id_bicicleta)
-       VALUES (Reserva_seq.NEXTVAL, SYSDATE, 'activa', :codigo, :id_usuario, :id_bicicleta)`,
+       VALUES (RESERVA_SEQ.NEXTVAL, SYSDATE, 'activa', :codigo, :id_usuario, :id_bicicleta)`,
       { codigo: codigo_desbloqueo, id_usuario, id_bicicleta },
       { autoCommit: false }
     );
 
-    // Obtener ID de la reserva recién creada
-    const idReservaResult = await connection.execute(
+    const result = await connection.execute(
       `SELECT MAX(id_reserva) FROM Reserva WHERE id_usuario = :id_usuario`,
       [id_usuario]
     );
-    const id_reserva = idReservaResult.rows[0][0];
+    const id_reserva = result.rows[0][0];
 
-    // Guardar la ruta del QR en la base de datos
+    // Actualizar reserva con ruta y binario
     await connection.execute(
-      `UPDATE Reserva SET qr_path = :qrPath WHERE id_reserva = :id`,
-      { qrPath: `qrs/${qrFileName}`, id: id_reserva },
+      `UPDATE Reserva SET qr_path = :qrPath, qr_imagen = :qrImage WHERE id_reserva = :id_reserva`,
+      {
+        qrPath: `qrs/${qrFileName}`,
+        qrImage: qrImageBuffer,
+        id_reserva
+      },
       { autoCommit: false }
     );
 
-    // Cambiar estado de la bicicleta
+    // Cambiar estado bicicleta y disponibilidad
     await connection.execute(
       `UPDATE Bicicleta SET estado = 'reservada' WHERE id_bicicleta = :id_bicicleta`,
       [id_bicicleta],
       { autoCommit: false }
     );
 
-    // Restar disponibilidad en la terminal
     await connection.execute(
       `UPDATE Terminal SET bicicletas_disponibles = bicicletas_disponibles - 1 WHERE id_terminal = :id_origen`,
       [id_origen],
       { autoCommit: true }
     );
 
-    // Respuesta final
     res.json({
       message: 'Reserva confirmada',
       codigo_desbloqueo,
@@ -231,18 +230,23 @@ app.post('/api/devolver', async (req, res) => {
         const id_origen = bicicletaResult.rows[0][0];
 
         // Cambiar estado de la reserva a completada
-        await connection.execute(
-            `UPDATE Reserva SET estado = 'completada', fecha_fin = SYSDATE WHERE id_reserva = :id_reserva`,
-            [id_reserva],
-            { autoCommit: false }
-        );
+await connection.execute(
+  `UPDATE Reserva SET estado = 'completada', fecha_fin = SYSDATE WHERE id_reserva = :id_reserva`,
+  [id_reserva],
+  { autoCommit: false }
+);
 
-        // Cambiar estado de la bicicleta a activa
-        await connection.execute(
-            `UPDATE Bicicleta SET estado = 'activo' WHERE id_bicicleta = :id_bicicleta`,
-            [id_bicicleta],
-            { autoCommit: false }
-        );
+// ✅ Cambiar estado de la bicicleta a ACTIVO (esto no debe fallar)
+await connection.execute(
+  `UPDATE Bicicleta SET estado = 'activo' WHERE id_bicicleta = :id_bicicleta`,
+  [id_bicicleta],
+  { autoCommit: false }
+);
+
+// ✅ Confirmar con un commit final (por si acaso)
+await connection.commit();
+
+
 
         // Sumar 1 a bicicletas_disponibles del terminal origen
         await connection.execute(
@@ -568,10 +572,6 @@ app.delete('/api/usuarios/:id', async (req, res) => {
     }
 });
 
-
-
-
-// Inicio del servidor
 app.listen(PORT, () => {
-  console.log(`Servidor escuchando en http://ecorideprfinal.lat:${PORT}`);
+    console.log(`Servidor backend corriendo en http://localhost:${PORT}`);
 });
